@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+    <world name="default">
+
+        <!-- A global light source -->
+        <include>
+            <uri>model://sun</uri>
+        </include>
+
+        <!-- A ground plane -->
+        <include>
+            <uri>model://ground_plane</uri>
+        </include>
+
+        <population name="barriers_test">
+            <model name="jersey_barrier_1">
+                <include>
+                    <static>true</static>
+                    <uri>model://jersey_barrier</uri>
+                </include>
+            </model>
+            <pose>0 3 0 0 0 0</pose>
+            <box>
+                <size>10 10 0.01</size>
+            </box>
+            <model_count>2</model_count>
+            <distribution>
+                <type>linear-x</type>
+            </distribution>
+        </population>
+        
+    </world>
+</sdf>
