@@ -1,0 +1,12 @@
+<launch>
+    <env name="ROSCONSOLE_FORMAT" value="[${severity}][${thread}][${node}/${function}:${line}]: ${message}"/>
+    <arg name="waypoints_topic" default="my_t3_waypoints"/>
+
+    <node pkg='servebot_project' type='follow_waypoint.py' name="follow_waypoint"
+    output="screen" clear_params="true">
+        <param name="goal_frame_id" value="odom"/>
+        <param name="custom_waypoints_topic" value="$(arg waypoints_topic)"/>
+    </node>
+    <node pkg='servebot_project' type='waypoint.py' name="moving_to_waypoints"/>
+
+</launch>
