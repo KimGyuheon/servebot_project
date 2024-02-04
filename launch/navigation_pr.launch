@@ -30,23 +30,12 @@
     </node>
 
 
-
-
-
-    <!-- 20240122 추가내용 -->
-    
-    <!-- setting tf from map to odom -->
-    <!-- args를 0 0 0 0 0 0 에 두면 -->
-    <node pkg="tf" type="static_transform_publisher" name="map_to_odom_publisher"
-    args="0 0 0 0 0 0 map odom 30" />
-    <!-- args="2.0 0.5 0 0 0 0 map odom 30" /> -->
-    
     <!-- serving static map -->
     <node pkg="map_server" type="map_server" name="map_server" args="$(find servebot_project)/map/map.yaml"/>
     
-    <!-- 20240125 amcl 추가 (에러발생) 중복된TF받아옴.-->
     <!-- AMCL.launch.xml -->
     <include file="$(find servebot_project)/launch/amcl.launch.xml" />
+
     <!-- rviz -->
     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find servebot_project)/rviz/serve.rviz"/>
     
@@ -62,7 +51,6 @@
     <rosparam file="$(find servebot_project)/param/costmap_common_params_$(arg model).yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find servebot_project)/param/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find servebot_project)/param/global_costmap_params.yaml" command="load" />
-    <!-- <rosparam file="$(find servebot_project)/param/global_costmap_params_odom.yaml" command="load"/> -->
     <rosparam file="$(find servebot_project)/param/move_base_params.yaml" command="load" />
     <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
     <remap from="odom" to="$(arg odom_topic)"/>

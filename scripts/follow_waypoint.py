@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import threading
 import rospy
 import actionlib
@@ -10,10 +9,12 @@ from geometry_msgs.msg import PoseArray, PoseWithCovarianceStamped
 from std_msgs.msg import Empty
 
 waypoints = []
-wpp_list = {1 : (0.0, 1.0),
-           2 : (4.5, 1.5),
-           3 : (4.5, -1.0),
-           4 : (3.0, -1.0)}
+wpp_list = {1 : (-6.0, 0.5),
+           2 : (-1.7, 1.7),
+           3 : (1.3, 2.0),
+           4 : (4.5, 1.7),
+           5 : (5.4, 1.3),
+           6 : (5.4, -1.4)}
 # wpp_list = {1 : (4.5, 0.7),
 #            2 : (5.36, -3.37),
 #            3 : (-6.25, -3.9),
@@ -111,36 +112,60 @@ class FollowPath(State):
 
     def execute(self, userdata):
         global waypoints
+        while(True):
+            print("type s to automatically follow waypoints")
+            print("or")
+            print("type waypoint number that you want")
+            key = input()
+            # Typing s will make robot follows the waypoints automatically
+            if(key == "s"):
+                # Execute waypoints each in sequence
+                for waypoint in waypoints:
+                    if waypoints == []: # Break if preempted
+                        ##rospy.loginfo("The waypoint queue has been reset.")
+                        break
 
-        # Execute waypoints each in sequence
-        for waypoint in waypoints:
-            if waypoints == []: # Break if preempted
-                ##rospy.loginfo("The waypoint queue has been reset.")
-                break
+                # Otherwise publish next waypoint as goal
+                    goal = MoveBaseGoal()
+                    goal.target_pose.header.frame_id = self.frame_id
+                    goal.target_pose.pose.position = waypoint.pose.pose.position
+                    goal.target_pose.pose.orientation = waypoint.pose.pose.orientation
 
-            # Otherwise publish next waypoint as goal
-            goal = MoveBaseGoal()
-            goal.target_pose.header.frame_id = self.frame_id
-            goal.target_pose.pose.position = waypoint.pose.pose.position
-            goal.target_pose.pose.orientation = waypoint.pose.pose.orientation
-            if(goal.target_pose.pose.position.x == wpp_list[2][0] and goal.target_pose.pose.position.y == wpp_list[2][1]):
-                rospy.loginfo("Get the food")
-                rospy.sleep(5)
+                    if(goal.target_pose.pose.position.x == wpp_list[1][0] and goal.target_pose.pose.position.y == wpp_list[1][1]):
+                        self.client.send_goal(goal=goal)
+                        self.client.wait_for_result()
+                        rospy.loginfo("I Got the food from kitchen!")
+                        rospy.sleep(5)
             
-            elif(goal.target_pose.pose.position.x == wpp_list[1][0] and goal.target_pose.pose.position.y == wpp_list[1][1]):
-                pass
-            
-            else:
-                for i in range(3, 5, 1):
-                    if(goal.target_pose.pose.position.x == wpp_list[i][0] and goal.target_pose.pose.position.y == wpp_list[i][1]):
-                        rospy.loginfo("Serving at table%s is complete"%i)
-            
-            ##rospy.loginfo("Executing move_base goal to position (x, y): %s, %s" %
-            ##              (waypoint.pose.pose.position.x, waypoint.pose.pose.position.y))
-            ##rospy.loginfo("To cancel the goal: 'rostopic pub -1 /move_base/cancel actionlib_msgs/GoalID -- {}'")
-            self.client.send_goal(goal=goal)
-            self.client.wait_for_result()
-        return 'success'
+                    else:
+                        for i in range(2, 7, 1):
+                            if(goal.target_pose.pose.position.x == wpp_list[i][0] and goal.target_pose.pose.position.y == wpp_list[i][1]):
+                                self.client.send_goal(goal=goal)
+                                self.client.wait_for_result()
+                                rospy.loginfo("Please take the food! ^~^")
+                                rospy.loginfo("Table %s : Serve Complete!"%(i-1))
+                                rospy.sleep(3)
+                return 'success'
+            # Typing the Number of waypoint will make robot to reach waypoint which user had typed
+            elif(key != "s"):
+                key=int(key)
+                waypoint = waypoints[key-1]
+                # Otherwise publish next waypoint as goal
+                goal = MoveBaseGoal()
+                goal.target_pose.header.frame_id = self.frame_id
+                goal.target_pose.pose.position = waypoint.pose.pose.position
+                goal.target_pose.pose.orientation = waypoint.pose.pose.orientation
+                if(goal.target_pose.pose.position.x == wpp_list[key][0] and goal.target_pose.pose.position.y == wpp_list[key][1]):
+                    rospy.sleep(3)
+                    if(key!=1):
+                        self.client.send_goal(goal=goal)
+                        self.client.wait_for_result()
+                        rospy.loginfo("Please take the food! ^~^")
+                        rospy.loginfo("Table %s : Serve Complete!"%(key-1))
+                    else:
+                        self.client.send_goal(goal=goal)
+                        self.client.wait_for_result()
+                        rospy.loginfo("I Got the food from kitchen!")
 
 ###############################################################################
 

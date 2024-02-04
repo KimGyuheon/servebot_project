@@ -8,12 +8,12 @@ from std_msgs.msg import Empty
 from geometry_msgs.msg import PoseWithCovarianceStamped
 
 # wp_id : (x, y)
-wp_list = {1 : (0.0, 1.0),
-           2 : (4.5, 1.5),
-           3 : (4.5, -1.0),
-           4 : (3.0, -1.0)}
-        #    3 : (-6.25, -3.9),
-        #    4 : (-12.5, -0.7),
+wp_list = {1 : (-6.0, 0.5),
+           2 : (-1.7, 1.7),
+           3 : (1.3, 2.0),
+           4 : (4.5, 1.7),
+           5 : (5.4, 1.3),
+           6 : (5.4, -1.4)}
         #    5 : (-9.5, 0.02)}
 
 def talker():
@@ -29,20 +29,27 @@ def talker():
 
     init_roll = 0.0
     init_pitch = 0.0
-    init_yaw = 0.64
+    init_yaw = 0.0
+
+    # if(wp_list[1]):
+    #     init_roll = 0.0
+    #     init_pitch = 0.0
+    #     init_yaw = 0.0
+    # elif(wp_list[2:4]):
+    #     init_roll = 0.0
+    #     init_pitch = 0.0
+    #     init_yaw = 0.9
+    # else:
+    #     init_roll = 0.0
+    #     init_pitch = 0.0
+    #     init_yaw = -0.9
 
     quaternion = tf.transformations.quaternion_from_euler(init_roll, init_pitch, init_yaw)
-	# transfromation from roll, pitch, yaw to x y z w
     
     my_wp.pose.pose.orientation.x = quaternion[0]
     my_wp.pose.pose.orientation.y = quaternion[1]
     my_wp.pose.pose.orientation.z = quaternion[2]
     my_wp.pose.pose.orientation.w = quaternion[3]
-    
-    # my_wp.pose.pose.orientation.x = 0.0
-    # my_wp.pose.pose.orientation.x = 0.0
-    # my_wp.pose.pose.orientation.x = 0.3
-    # my_wp.pose.pose.orientation.w = 0.9
 
     for i in range(len(wp_list)):
         rospy.loginfo("Waypoint" + str(i))
