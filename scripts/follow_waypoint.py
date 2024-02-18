@@ -15,12 +15,6 @@ wpp_list = {1 : (-6.0, 0.5),
            4 : (4.5, 1.7),
            5 : (5.4, 1.3),
            6 : (5.4, -1.4)}
-# wpp_list = {1 : (4.5, 0.7),
-#            2 : (5.36, -3.37),
-#            3 : (-6.25, -3.9),
-#            4 : (-12.5, -0.7),
-#            5 : (-9.5, 0.02)}
-
 
 def convert_PoseWithCovarianceStamped_to_PoseArray(waypoints):
     """Used to publish waypoints as pose array so that you can see them in rviz, etc."""
@@ -174,10 +168,6 @@ class PathComplete(State):
         State.__init__(self, outcomes=['success'])
 
     def execute(self, userdata):
-    	# rospy.loginfo("###########################")
-    	# rospy.loginfo("### I bring you a plate ###")
-    	# rospy.loginfo("#### Please the dishes ####")
-    	# rospy.loginfo("###########################")
         return 'success'
         
 

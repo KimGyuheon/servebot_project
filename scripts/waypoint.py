@@ -7,14 +7,12 @@ import tf.transformations
 from std_msgs.msg import Empty
 from geometry_msgs.msg import PoseWithCovarianceStamped
 
-# wp_id : (x, y)
 wp_list = {1 : (-6.0, 0.5),
            2 : (-1.7, 1.7),
            3 : (1.3, 2.0),
            4 : (4.5, 1.7),
            5 : (5.4, 1.3),
            6 : (5.4, -1.4)}
-        #    5 : (-9.5, 0.02)}
 
 def talker():
     pub_wp = rospy.Publisher('my_t3_waypoints', PoseWithCovarianceStamped, queue_size=1)
@@ -30,19 +28,6 @@ def talker():
     init_roll = 0.0
     init_pitch = 0.0
     init_yaw = 0.0
-
-    # if(wp_list[1]):
-    #     init_roll = 0.0
-    #     init_pitch = 0.0
-    #     init_yaw = 0.0
-    # elif(wp_list[2:4]):
-    #     init_roll = 0.0
-    #     init_pitch = 0.0
-    #     init_yaw = 0.9
-    # else:
-    #     init_roll = 0.0
-    #     init_pitch = 0.0
-    #     init_yaw = -0.9
 
     quaternion = tf.transformations.quaternion_from_euler(init_roll, init_pitch, init_yaw)
     
