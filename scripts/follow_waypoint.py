@@ -8,6 +8,8 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from geometry_msgs.msg import PoseArray, PoseWithCovarianceStamped
 from std_msgs.msg import Empty
 
+import time
+
 waypoints = []
 wpp_list = {1 : (-6.0, 0.5),
            2 : (-1.7, 1.7),
@@ -152,10 +154,13 @@ class FollowPath(State):
                 if(goal.target_pose.pose.position.x == wpp_list[key][0] and goal.target_pose.pose.position.y == wpp_list[key][1]):
                     rospy.sleep(3)
                     if(key!=1):
+                        start = time.time()
                         self.client.send_goal(goal=goal)
                         self.client.wait_for_result()
                         rospy.loginfo("Please take the food! ^~^")
                         rospy.loginfo("Table %s : Serve Complete!"%(key-1))
+                        stop = time.time()
+                        print(stop-start)
                     else:
                         self.client.send_goal(goal=goal)
                         self.client.wait_for_result()
