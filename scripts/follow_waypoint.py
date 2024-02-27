@@ -70,8 +70,6 @@ class GetPath(State):
         ready_thread.start()
 
         waypoints_topic = self.custom_waypoint_topic
-        ##rospy.loginfo("Waiting to recieve waypoints via Pose msg on topic %s" % waypoints_topic)
-        ##rospy.loginfo("To start following waypoints: 'rostopic pub /path_ready std_msgs/Empty -1")
 
         # Wait for published waypoints
         while not self.path_ready:
@@ -91,8 +89,6 @@ class GetPath(State):
 
         # Path is ready! return success and move on to the next state (FOLLOW_PATH)
         return 'success'
-
-###############################################################################
 
 # when full pointspace
 class FollowPath(State):
@@ -146,7 +142,6 @@ class FollowPath(State):
             elif(key != "s"):
                 key=int(key)
                 waypoint = waypoints[key-1]
-                # Otherwise publish next waypoint as goal
                 goal = MoveBaseGoal()
                 goal.target_pose.header.frame_id = self.frame_id
                 goal.target_pose.pose.position = waypoint.pose.pose.position
@@ -166,8 +161,6 @@ class FollowPath(State):
                         self.client.wait_for_result()
                         rospy.loginfo("I Got the food from kitchen!")
 
-###############################################################################
-
 class PathComplete(State):
     def __init__(self):
         State.__init__(self, outcomes=['success'])
@@ -175,8 +168,6 @@ class PathComplete(State):
     def execute(self, userdata):
         return 'success'
         
-
-###############################################################################
 
 def main():
     rospy.init_node('custom_follow_waypoints')
